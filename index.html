@@ -31,6 +31,7 @@
             max-width: 500px;
             width: 90%;
             box-sizing: border-box;
+            position: relative; /* Aiuta a mantenere l'ordine dei livelli */
         }
 
         /* Gestione dei passaggi */
@@ -72,7 +73,6 @@
             justify-content: center;
             gap: 20px;
             min-height: 60px;
-            position: relative;
         }
 
         button {
@@ -101,7 +101,8 @@
             background-color: #ff4757;
             color: white;
             box-shadow: 0 4px 10px rgba(255, 71, 87, 0.2);
-            transition: all 0.4s ease-in-out; /* Permette al bottone di "volare" dolcemente da un punto all'altro */
+            transition: all 0.4s ease-in-out; 
+            z-index: 1000; /* Assicura che voli SEMPRE sopra il contenitore bianco */
         }
 
         /* Stile per le emoji fluttuanti */
@@ -153,36 +154,29 @@
         </div>
 
         <div id="step-4" class="step">
-            <h1>🎉<br><br>Organizziamooo 🍦😋</h1>
+            <h1>🎉<br><br>Organizziamooo🍦😋</h1>
         </div>
     </div>
 
     <script>
-        let moveInterval; // Variabile per controllare il timer del movimento continuo
+        let moveInterval; 
 
         // FUNZIONE PER PASSARE DA UNA PAGINA ALL'ALTRA
         function goToStep(stepNumber, bgColor) {
-            // Nascondi tutti gli step
             const steps = document.querySelectorAll('.step');
             steps.forEach(step => step.classList.remove('active'));
             
-            // Mostra lo step desiderato
             const nextStep = document.getElementById('step-' + stepNumber);
             if (nextStep) {
                 nextStep.classList.add('active');
             }
             
-            // Cambia il colore di sfondo
             document.body.style.backgroundColor = bgColor;
 
-            // Se arriviamo alla pagina 3, inizia a far impazzire il tasto "No"
             if (stepNumber === 3) {
-                // Lo fa muovere subito la prima volta per non farlo restare fermo all'inizio
                 moveBtnNo();
-                // Lo fa spostare in automatico ogni 0.9 secondi
                 moveInterval = setInterval(moveBtnNo, 900);
             } else {
-                // Ferma il timer del movimento se andiamo via dalla pagina 3
                 clearInterval(moveInterval);
             }
         }
@@ -191,25 +185,24 @@
         const btnNo = document.getElementById('btn-no');
 
         function moveBtnNo() {
-            btnNo.style.position = 'absolute';
+            // Usiamo fixed così le coordinate sono sempre calcolate sullo schermo visibile
+            btnNo.style.position = 'fixed';
             
             const windowWidth = window.innerWidth;
             const windowHeight = window.innerHeight;
             const btnWidth = btnNo.offsetWidth || 100;
             const btnHeight = btnNo.offsetHeight || 50;
             
-            // Genera coordinate casuali assicurandosi che il bottone non esca mai dallo schermo
-            const randomX = Math.floor(Math.random() * (windowWidth - btnWidth - 20)) + 10;
-            const randomY = Math.floor(Math.random() * (windowHeight - btnHeight - 20)) + 10;
+            // Genera coordinate casuali nei limiti visibili dello schermo (con un margine di 20px)
+            const randomX = Math.floor(Math.random() * (windowWidth - btnWidth - 40)) + 20;
+            const randomY = Math.floor(Math.random() * (windowHeight - btnHeight - 40)) + 20;
             
             btnNo.style.left = randomX + 'px';
             btnNo.style.top = randomY + 'px';
         }
 
-        // Lo fa scappare via anche se lei per caso prova ad avvicinare il mouse velocemente
         btnNo.addEventListener('mouseover', moveBtnNo);
 
-        // Disabilita fisicamente il click: nel caso miracoloso riesca a premerlo durante il volo, non succede nulla!
         btnNo.addEventListener('click', (e) => {
             e.preventDefault();
         });
