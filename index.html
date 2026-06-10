@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Un pensiero per Giulia</title>
+    <style>
+        /* Impostazioni generali della pagina */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffe4e1; /* Colore iniziale: Rosa pastello leggero */
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            overflow: hidden;
+            position: relative;
+            transition: background-color 0.8s ease; /* Transizione fluida del colore di sfondo */
+        }
+
+        /* Contenitore centrale stondato */
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 24px; /* Riquadri ben stondati */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            z-index: 10;
+            max-width: 500px;
+            width: 90%;
+            box-sizing: border-box;
+        }
+
+        /* Gestione dei passaggi (pagine interne) */
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #000000; /* Scritta rigorosamente nera */
+            font-size: 26px;
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+
+        /* GIF del cagnolino */
+        .gif-container {
+            margin-bottom: 20px;
+        }
+
+        .gif-container img {
+            width: 230px;
+            border-radius: 20px; /* GIF stondata */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Area e stile dei bottoni */
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            min-height: 60px;
+            position: relative;
+        }
+
+        button {
+            padding: 14px 32px;
+            font-size: 20px;
+            border: none;
+            border-radius: 15px; /* Bottoni stondati */
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        /* Bottone Continua / Sì */
+        .btn-next, #btn-si {
+            background-color: #4CAF50;
+            color: white;
+            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.2);
+        }
+
+        .btn-next:hover, #btn-si:hover {
+            transform: scale(1.05);
+        }
+
+        /* Bottone NO */
+        #btn-no {
+            background-color: #ff4757;
+            color: white;
+            box-shadow: 0 4px 10px rgba(255, 71, 87, 0.2);
+        }
+
+        /* Stile per le emoji fluttuanti sullo sfondo */
+        .emoji {
+            position: absolute;
+            user-select: none;
+            animation: floatUp linear forwards;
+            z-index: 1;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-20vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- PAGINA 1 -->
+        <div id="step-1" class="step active">
+            <h1>Ciaooooo Giuliaaa☺️</h1>
+            <div class="buttons">
+                <button class="btn-next" onclick="goToStep(2, '#f3e5f5')">Continua</button>
+            </div>
+        </div>
+
+        <!-- PAGINA 2 -->
+        <div id="step-2" class="step">
+            <h1>Spero di non esser troppo molesto😔</h1>
+            <div class="buttons">
+                <button class="btn-next" onclick="goToStep(3, '#d4f1f9')">Continua</button>
+            </div>
+        </div>
+
+        <!-- PAGINA 3 (La proposta) -->
+        <div id="step-3" class="step">
+            <div class="gif-container">
+                <!-- Il file cane.gif deve essere nella stessa cartella dell'index.html -->
+                <img src="cane.gif" alt="Golden Retriever Gelato">
+            </div>
+            <h1>Ti andrebbe di prendere un gelato?🙈</h1>
+            <div class="buttons" id="proposal-buttons">
+                <button id="btn-si" onclick="goToStep(4, '#e8f5e9')">Sì</button>
+                <button id="btn-no">No</button>
+            </div>
+        </div>
+
+        <!-- PAGINA FINAL (Successo) -->
+        <div id="step-4" class="step">
+            <h1>Ottima scelta! 🎉<br><br>Organizziamo! 🍦😋</h1>
+        </div>
+    </div>
+
+    <script>
+        // FUNZIONE PER PASSARE DA UNA PAGINA ALL'ALTRA CAMBIANDO COLORE DI SFONDO
+        function goToStep(stepNumber, bgColor) {
+            // Nascondi tutti gli step
+            const steps = document.querySelectorAll('.step');
+            steps.forEach(step => step.classList.remove('active'));
+            
+            // Mostra lo step desiderato
+            const nextStep = document.getElementById('step-' + stepNumber);
+            if (nextStep) {
+                nextStep.classList.add('active');
+            }
+            
+            // Cambia il colore di sfondo del body
+            document.body.style.backgroundColor = bgColor;
+        }
+
+        // LOGICA DEL TASTO "NO" CHE SCAPPA
+        const btnNo = document.getElementById('btn-no');
+
+        btnNo.addEventListener('mouseover', () => {
+            btnNo.style.position = 'absolute';
+            
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            const btnWidth = btnNo.offsetWidth;
+            const btnHeight = btnNo.offsetHeight;
+            
+            // Calcola posizioni casuali per non farlo uscire dallo schermo
+            const randomX = Math.floor(Math.random() * (windowWidth - btnWidth));
+            const randomY = Math.floor(Math.random() * (windowHeight - btnHeight));
+            
+            btnNo.style.left = randomX + 'px';
+            btnNo.style.top = randomY + 'px';
+        });
+
+        // LOGICA DELLE EMOJI FLUTTUANTI (Sempre attive su tutte le pagine)
+        const emojis = ['🍦', '🐷', '😋'];
+        
+        function createEmoji() {
+            const emojiEl = document.createElement('div');
+            emojiEl.classList.add('emoji');
+            emojiEl.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+            
+            emojiEl.style.left = Math.random() * 100 + 'vw';
+            
+            const duration = Math.random() * 4 + 4; // Tra i 4 e gli 8 secondi
+            emojiEl.style.animationDuration = duration + 's';
+            
+            const size = Math.random() * 20 + 25; // Dimensione tra 25px e 45px
+            emojiEl.style.fontSize = size + 'px';
+            
+            document.body.appendChild(emojiEl);
+            
+            setTimeout(() => {
+                emojiEl.remove();
+            }, duration * 1000);
+        }
+
+        // Genera un'emoji ogni 150 millisecondi per mantenerle dense e diffuse
+        setInterval(createEmoji, 150);
+    </script>
+
+</body>
+</html>
