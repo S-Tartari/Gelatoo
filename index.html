@@ -17,7 +17,7 @@
             font-family: 'Comic Sans MS', 'Arial', sans-serif;
             overflow: hidden;
             position: relative;
-            transition: background-color 0.8s ease; /* Transizione fluida del colore di sfondo */
+            transition: background-color 0.8s ease; /* Transizione fluida dello sfondo */
         }
 
         /* Contenitore centrale stondato */
@@ -25,7 +25,7 @@
             text-align: center;
             background: rgba(255, 255, 255, 0.9);
             padding: 40px;
-            border-radius: 24px; /* Riquadri ben stondati */
+            border-radius: 24px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.08);
             z-index: 10;
             max-width: 500px;
@@ -33,7 +33,7 @@
             box-sizing: border-box;
         }
 
-        /* Gestione dei passaggi (pagine interne) */
+        /* Gestione dei passaggi */
         .step {
             display: none;
         }
@@ -49,7 +49,7 @@
         }
 
         h1 {
-            color: #000000; /* Scritta rigorosamente nera */
+            color: #000000;
             font-size: 26px;
             margin-bottom: 30px;
             line-height: 1.4;
@@ -62,7 +62,7 @@
 
         .gif-container img {
             width: 230px;
-            border-radius: 20px; /* GIF stondata */
+            border-radius: 20px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
@@ -79,7 +79,7 @@
             padding: 14px 32px;
             font-size: 20px;
             border: none;
-            border-radius: 15px; /* Bottoni stondati */
+            border-radius: 15px;
             cursor: pointer;
             font-weight: bold;
             transition: transform 0.2s, background-color 0.2s;
@@ -96,14 +96,15 @@
             transform: scale(1.05);
         }
 
-        /* Bottone NO */
+        /* Bottone NO con animazione fluida */
         #btn-no {
             background-color: #ff4757;
             color: white;
             box-shadow: 0 4px 10px rgba(255, 71, 87, 0.2);
+            transition: all 0.4s ease-in-out; /* Permette al bottone di "volare" dolcemente da un punto all'altro */
         }
 
-        /* Stile per le emoji fluttuanti sullo sfondo */
+        /* Stile per le emoji fluttuanti */
         .emoji {
             position: absolute;
             user-select: none;
@@ -126,7 +127,6 @@
 <body>
 
     <div class="container">
-        <!-- PAGINA 1 -->
         <div id="step-1" class="step active">
             <h1>Ciaooooo Giuliaaa☺️</h1>
             <div class="buttons">
@@ -134,7 +134,6 @@
             </div>
         </div>
 
-        <!-- PAGINA 2 -->
         <div id="step-2" class="step">
             <h1>Spero di non esser troppo molesto😔</h1>
             <div class="buttons">
@@ -142,10 +141,8 @@
             </div>
         </div>
 
-        <!-- PAGINA 3 (La proposta) -->
         <div id="step-3" class="step">
             <div class="gif-container">
-                <!-- Il file cane.gif deve essere nella stessa cartella dell'index.html -->
                 <img src="cane.gif" alt="Golden Retriever Gelato">
             </div>
             <h1>Ti andrebbe di prendere un gelato?🙈</h1>
@@ -155,14 +152,15 @@
             </div>
         </div>
 
-        <!-- PAGINA FINAL (Successo) -->
         <div id="step-4" class="step">
-            <h1>Ottima scelta! 🎉<br><br>Organizziamo! 🍦😋</h1>
+            <h1>🎉<br><br>Organizziamooo 🍦😋</h1>
         </div>
     </div>
 
     <script>
-        // FUNZIONE PER PASSARE DA UNA PAGINA ALL'ALTRA CAMBIANDO COLORE DI SFONDO
+        let moveInterval; // Variabile per controllare il timer del movimento continuo
+
+        // FUNZIONE PER PASSARE DA UNA PAGINA ALL'ALTRA
         function goToStep(stepNumber, bgColor) {
             // Nascondi tutti gli step
             const steps = document.querySelectorAll('.step');
@@ -174,30 +172,49 @@
                 nextStep.classList.add('active');
             }
             
-            // Cambia il colore di sfondo del body
+            // Cambia il colore di sfondo
             document.body.style.backgroundColor = bgColor;
+
+            // Se arriviamo alla pagina 3, inizia a far impazzire il tasto "No"
+            if (stepNumber === 3) {
+                // Lo fa muovere subito la prima volta per non farlo restare fermo all'inizio
+                moveBtnNo();
+                // Lo fa spostare in automatico ogni 0.9 secondi
+                moveInterval = setInterval(moveBtnNo, 900);
+            } else {
+                // Ferma il timer del movimento se andiamo via dalla pagina 3
+                clearInterval(moveInterval);
+            }
         }
 
-        // LOGICA DEL TASTO "NO" CHE SCAPPA
+        // LOGICA DEL TASTO "NO" CHE SI MUOVE DA SOLO
         const btnNo = document.getElementById('btn-no');
 
-        btnNo.addEventListener('mouseover', () => {
+        function moveBtnNo() {
             btnNo.style.position = 'absolute';
             
             const windowWidth = window.innerWidth;
             const windowHeight = window.innerHeight;
-            const btnWidth = btnNo.offsetWidth;
-            const btnHeight = btnNo.offsetHeight;
+            const btnWidth = btnNo.offsetWidth || 100;
+            const btnHeight = btnNo.offsetHeight || 50;
             
-            // Calcola posizioni casuali per non farlo uscire dallo schermo
-            const randomX = Math.floor(Math.random() * (windowWidth - btnWidth));
-            const randomY = Math.floor(Math.random() * (windowHeight - btnHeight));
+            // Genera coordinate casuali assicurandosi che il bottone non esca mai dallo schermo
+            const randomX = Math.floor(Math.random() * (windowWidth - btnWidth - 20)) + 10;
+            const randomY = Math.floor(Math.random() * (windowHeight - btnHeight - 20)) + 10;
             
             btnNo.style.left = randomX + 'px';
             btnNo.style.top = randomY + 'px';
+        }
+
+        // Lo fa scappare via anche se lei per caso prova ad avvicinare il mouse velocemente
+        btnNo.addEventListener('mouseover', moveBtnNo);
+
+        // Disabilita fisicamente il click: nel caso miracoloso riesca a premerlo durante il volo, non succede nulla!
+        btnNo.addEventListener('click', (e) => {
+            e.preventDefault();
         });
 
-        // LOGICA DELLE EMOJI FLUTTUANTI (Sempre attive su tutte le pagine)
+        // LOGICA DELLE EMOJI FLUTTUANTI
         const emojis = ['🍦', '🐷', '😋'];
         
         function createEmoji() {
@@ -207,10 +224,10 @@
             
             emojiEl.style.left = Math.random() * 100 + 'vw';
             
-            const duration = Math.random() * 4 + 4; // Tra i 4 e gli 8 secondi
+            const duration = Math.random() * 4 + 4;
             emojiEl.style.animationDuration = duration + 's';
             
-            const size = Math.random() * 20 + 25; // Dimensione tra 25px e 45px
+            const size = Math.random() * 20 + 25;
             emojiEl.style.fontSize = size + 'px';
             
             document.body.appendChild(emojiEl);
@@ -220,7 +237,6 @@
             }, duration * 1000);
         }
 
-        // Genera un'emoji ogni 150 millisecondi per mantenerle dense e diffuse
         setInterval(createEmoji, 150);
     </script>
 
